@@ -25,7 +25,7 @@ The Cafeteria Management System is a program designed to manage food items, orde
   - quantity: Quantity of the food item in stock.
   - next: Pointer to the next FoodItem in the linked list.
 ###
-### ![](Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.002.png)
+### ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.002.png)
 
 ### <a name="_jid3hrujsm7x"></a><a name="_46pk1ybkosiq"></a><a name="_tgoo22bvhk6p"></a>**2. OrderItem**
 - Represents an item in a customer's order.
@@ -85,8 +85,8 @@ The Cafeteria Management System is a program designed to manage food items, orde
 - Example functions: createOrderItemNode, placeOrder, displayOrderSummary, showtotal.
 
 ### ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.014.png)
-## ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.016.png)<a name="_p1j9v97tjas9"></a><a name="_c3do1ltrfhq0"></a>**	
-## ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.017.png)
+### ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.016.png)<a name="_p1j9v97tjas9"></a><a name="_c3do1ltrfhq0"></a>	
+### ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.017.png)
 ###
 ### <a name="_hr7f7knqyyai"></a><a name="_cx05ik35kksb"></a><a name="_x3ptepkg0ja3"></a>**File Operations**
 - Functions for loading and saving the menu from/to a file and deleting a food item from the file.

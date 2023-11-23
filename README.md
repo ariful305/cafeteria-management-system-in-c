@@ -25,7 +25,7 @@ The Cafeteria Management System is a program designed to manage food items, orde
   - quantity: Quantity of the food item in stock.
   - next: Pointer to the next FoodItem in the linked list.
 ###
-### ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.002.png)
+### ![](Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.002.png)
 ### <a name="_jid3hrujsm7x"></a><a name="_46pk1ybkosiq"></a><a name="_tgoo22bvhk6p"></a>**2. OrderItem**
 - Represents an item in a customer's order.
 - Attributes:
@@ -34,8 +34,8 @@ The Cafeteria Management System is a program designed to manage food items, orde
   - price: Total price of the ordered item.
   - quantity: Quantity of the ordered item.
   - next: Pointer to the next OrderItem in the linked list.
-
-    ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.003.png)
+###
+### ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.003.png)
 
 ### <a name="_liwnsedv6pkx"></a>**3. OrderQueueNode**
 - Represents a node in the order queue.

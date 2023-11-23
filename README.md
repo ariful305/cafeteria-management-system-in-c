@@ -127,8 +127,9 @@ The main function initializes global variables, loads the menu, and presents a m
 
 ### ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.032.png)
 
-**For Admin menu
-### ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.033.png)**
+**For Admin menu**
+
+### ![](images/Aspose.Words.d763cd31-ecbc-449c-a646-937f31083637.033.png)
 
 **Here's an explanation of why each data structure is used:**
 

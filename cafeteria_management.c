@@ -97,6 +97,9 @@ int authenticate(struct User* currentUser)
 
 struct FoodItem* createFoodItemNode(char name[], float price, int quantity)
 {
+
+
+
     struct FoodItem* newItem = (struct FoodItem*)malloc(sizeof(struct FoodItem));
     if (newItem != NULL)
     {
@@ -190,23 +193,27 @@ void deleteFoodItem(struct FoodItem** head, char name[])
 void displayMenu(struct FoodItem* head)
 {
     struct FoodItem* current = head;
-    if(current != NULL)
+
+    if (current != NULL)
     {
-        printf("Menu:\n");
+        printf("|--------|----------------------|------------|-----------|\n");
+        printf("| %-6s | %-20s | %-10s | %-9s |\n", "No.", "Name", "Price ($)", "Quantity");
+        printf("|--------|----------------------|------------|-----------|\n");
     }
     else
     {
         printf("No item available\n\n");
+        return;
     }
 
     int itemNumber = 1;
     while (current != NULL)
     {
-        printf("%d. %s - $%.2f - Quantity: %d\n", itemNumber, current->name, current->price, current->quantity);
+        printf("| %-6d | %-20s | %-10.2f | %-9d |\n", itemNumber, current->name, current->price, current->quantity);
         current = current->next;
         itemNumber++;
     }
-
+     printf("|--------|----------------------|------------|-----------|\n");
 }
 
 /******************************************************************************
@@ -223,14 +230,14 @@ void displayMenu(struct FoodItem* head)
  * @param customerName Name of the customer placing the order.
  * @return Pointer to the newly created OrderItem node.
  */
-struct OrderItem* createOrderItemNode(char name[], float price, int quantity, char customerName[])
+struct OrderItem* createOrderItemNode(char name[], float pricePerUnit, int quantity, char customerName[])
 {
     struct OrderItem* newItem = (struct OrderItem*)malloc(sizeof(struct OrderItem));
     if (newItem != NULL)
     {
         strcpy(newItem->name, name);
         strcpy(newItem->customerName, customerName);
-        newItem->price = price * quantity; // Use price * quantity
+        newItem->price = pricePerUnit * quantity; // Use price * quantity
         newItem->quantity = quantity;
         newItem->next = NULL;
     }
@@ -324,6 +331,19 @@ void showtotal(struct OrderItem* order)
     printf("$%.2f\n", total); // Change to %f for double
 }
 
+float getPriceByName(struct FoodItem* menu,char name[])
+{
+    struct FoodItem* current = menu;
+    while (current != NULL)
+    {
+        if (strcmp(current->name, name) == 0)
+        {
+            return current->price;
+        }
+        current = current->next;
+    }
+    return 0.0; // Return 0 if the item is not found (you may choose a different value)
+}
 /******************************************************************************
 *                          File Operation                                     *
 ******************************************************************************/
@@ -472,7 +492,7 @@ struct StackNode* createStackNode(char customerName[],struct OrderItem* orderInf
  * @param orderInfo Pointer to the OrderItem associated with the table.
  */
 
-void push(struct StackNode **top ,char customerName[], struct OrderItem* orderInfo)
+void push(struct StackNode **top,char customerName[], struct OrderItem* orderInfo)
 {
     struct StackNode* newNode = createStackNode(customerName, orderInfo);
     if (newNode != NULL)
@@ -504,20 +524,22 @@ struct StackNode* pop(struct StackNode **top)
 }
 void displaystack(struct StackNode* top)
 {
-    if(top != NULL){
-    printf("\n=================================================n");
-    printf("| %-15s | %-15s |\n", "Table Number", "Customer Name\n");
-    printf("==================================================\n");
-
-    while (top != NULL)
+    if(top != NULL)
     {
-        printf("| %-15d | %-15s |\n", top->tableNumber, top->customerName); // Update "Details" based on your order information
-        top = top->next;
-    }
+        printf("\n=================================================\n");
+        printf("| %-15s | %-15s |\n", "Table Number", "Customer Name\n");
+        printf("==================================================\n");
+
+        while (top != NULL)
+        {
+            printf("| %-15d | %-15s |\n", top->tableNumber, top->customerName); // Update "Details" based on your order information
+            top = top->next;
+        }
 
         printf("==================================================\n");
     }
-    else{
+    else
+    {
         printf("=================================================\n");
         printf("                        No Data In stack           \n");
         printf("=================================================\n");
@@ -610,7 +632,7 @@ struct OrderQueueNode* dequeueOrder(struct OrderQueueNode** front)
     printf("Processing order: %s - Quantity: %d - Customer: %s\n", temp->data->name, temp->data->quantity, temp->data->customerName);
     fflush(stdout); // Flush the output buffer to display the loading animation immediately
 
-    // Introduce a loading animation (e.g., three dots)
+   
     for (int i = 0; i < 25; ++i)
     {
         printf(".");
@@ -645,7 +667,7 @@ void displayOrderQueue(struct OrderQueueNode** front)
         int serialNumber = 1;
         while (current != NULL)
         {
-            printf("| %-5d | %-20s | %-30s | %-10d | $%-19.2f |\n", serialNumber, current->data->customerName, current->data->name, current->data->quantity, current->data->price);
+            printf("| %-5d | %-20s | %-30s | %-10d | $%-20.2f |\n", serialNumber, current->data->customerName, current->data->name, current->data->quantity, current->data->price);
             current = current->next;
             serialNumber++;
         }
@@ -729,9 +751,12 @@ a:
             scanf("%d", &itemQuantity);
             if(placeOrder(&menu, &order, itemName, itemQuantity, customerName) == 1)
             {
-                struct FoodItem* orderedItem = createFoodItemNode(itemName, 0.0, itemQuantity);
-                enqueueOrder(&front, &rear, createOrderItemNode(itemName, 0.0, itemQuantity, customerName));
-                push(&top,customerName,createOrderItemNode(itemName, 0.0, itemQuantity, customerName));
+                itemPrice = getPriceByName(menu, itemName);
+
+                struct FoodItem* orderedItem = createFoodItemNode(itemName, itemPrice, itemQuantity);
+                enqueueOrder(&front, &rear, createOrderItemNode(itemName, itemPrice, itemQuantity, customerName));
+                push(&top,customerName,createOrderItemNode(itemName, itemPrice, itemQuantity, customerName));
+
             }
 
             break;
@@ -756,14 +781,15 @@ a:
                 printf("Enter your choice: \n");
                 printf("1. Add Food Item\n");
                 printf("2. Edit Food Item\n");
-                printf("3. Place Order\n");
-                printf("4. Display Menu\n");
-                printf("5. Display Order Summary\n");
-                printf("6. Delete Food Item\n");
+                printf("3. Delete Food Item\n");
+                printf("4. Place Order\n");
+                printf("5. Display Menu\n");
+                printf("6. Display Order Summary\n");
                 printf("7. Display stack\n");
                 printf("8. Display Order queue\n");
                 printf("9. Process one Order \n");
                 printf("10. Exit\n");
+                printf("Enter your choice: ");
                 scanf("%d", &choice);
 
                 switch (choice)
@@ -783,7 +809,13 @@ a:
                     scanf("%s", editItemName);
                     editFoodItem(&menu, editItemName);
                     break;
-                case 3:
+               case 3:
+                    printf("Enter item name to delete: ");
+                    scanf("%s", itemName);
+                    deleteItemFromFile(itemName);
+                    deleteFoodItem(&menu, itemName);
+                    break;
+                case 4:
                     printf("Enter customer's name: ");
                     scanf("%s", customerName);
                     printf("Enter item name to order: ");
@@ -792,28 +824,25 @@ a:
                     scanf("%d", &itemQuantity);
                     if(placeOrder(&menu, &order, itemName, itemQuantity, customerName) == 1)
                     {
-                        struct FoodItem* orderedItem = createFoodItemNode(itemName, 0.0, itemQuantity);
-                        enqueueOrder(&front, &rear, createOrderItemNode(itemName, 0.0, itemQuantity, customerName));
-                        push(&top,customerName,createOrderItemNode(itemName, 0.0, itemQuantity, customerName));
+                        itemPrice = getPriceByName(&menu, itemName);
+
+                        struct FoodItem* orderedItem = createFoodItemNode(itemName, itemPrice, itemQuantity);
+                        enqueueOrder(&front, &rear, createOrderItemNode(itemName, itemPrice, itemQuantity, customerName));
+                        push(&top,customerName,createOrderItemNode(itemName, itemPrice, itemQuantity, customerName));
                     }
 
                     break;
-                case 4:
+                case 5:
                     displayMenu(menu);
                     break;
-                case 5:
+                case 6:
                     displayOrderSummary(order);
                     showtotal(order);
                     break;
-                case 6:
-                    printf("Enter item name to delete: ");
-                    scanf("%s", itemName);
-                    deleteItemFromFile(itemName);
-                    deleteFoodItem(&menu, itemName);
-                    break;
+
                 case 7:
                     displaystack(top);
-                     break;
+                    break;
                 case 8:
                     displayOrderQueue(&front);
                     break;
@@ -833,7 +862,7 @@ a:
                     saveMenuToFile(menu);
                     freeMenuAndOrder(menu, order);
                     goto a;
-                     break;
+                    break;
 
 
 
@@ -851,11 +880,11 @@ a:
     {
         struct OrderItem* processedItem = dequeueOrder(&orderQueue);
 
-        // Assuming that name and customerName are dynamically allocated
+        
         free(processedItem->name);
         free(processedItem->customerName);
 
-        free(processedItem); // Free the OrderItem itself
+        free(processedItem);
     }
 
 

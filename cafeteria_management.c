@@ -213,7 +213,7 @@ void displayMenu(struct FoodItem* head)
         current = current->next;
         itemNumber++;
     }
-     printf("|--------|----------------------|------------|-----------|\n");
+    printf("|--------|----------------------|------------|-----------|\n");
 }
 
 /******************************************************************************
@@ -632,12 +632,12 @@ struct OrderQueueNode* dequeueOrder(struct OrderQueueNode** front)
     printf("Processing order: %s - Quantity: %d - Customer: %s\n", temp->data->name, temp->data->quantity, temp->data->customerName);
     fflush(stdout); // Flush the output buffer to display the loading animation immediately
 
-   
+
     for (int i = 0; i < 25; ++i)
     {
         printf(".");
         fflush(stdout);
-        usleep(500000); // Introduce a delay of 500,000 microseconds (0.5 seconds) between dots
+        usleep(50000); // Introduce a delay of 500,000 microseconds (0.5 seconds) between dots
     }
 
     printf("\n");
@@ -704,8 +704,6 @@ void freeMenuAndOrder(struct FoodItem* menu, struct OrderItem* order)
     {
         struct OrderItem* tempOrder = order;
         order = order->next;
-        free(tempOrder->name);
-        free(tempOrder->customerName);
         free(tempOrder);
     }
 }
@@ -734,6 +732,7 @@ a:
         printf("2. Place Order\n");
         printf("3. Display Order Queue\n");
         printf("4. Admin Login\n");
+        printf("5. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
@@ -766,9 +765,12 @@ a:
         case 4:
             isAuthenticated = authenticate(&admin);
             break;
+        case 5:
+            goto b;
+            break;
         default:
             printf("Invalid choice.\n");
-            exit(1);
+
         }
 
         if (isAuthenticated)
@@ -809,7 +811,7 @@ a:
                     scanf("%s", editItemName);
                     editFoodItem(&menu, editItemName);
                     break;
-               case 3:
+                case 3:
                     printf("Enter item name to delete: ");
                     scanf("%s", itemName);
                     deleteItemFromFile(itemName);
@@ -824,11 +826,12 @@ a:
                     scanf("%d", &itemQuantity);
                     if(placeOrder(&menu, &order, itemName, itemQuantity, customerName) == 1)
                     {
-                        itemPrice = getPriceByName(&menu, itemName);
+                        itemPrice = getPriceByName(menu, itemName);
 
                         struct FoodItem* orderedItem = createFoodItemNode(itemName, itemPrice, itemQuantity);
                         enqueueOrder(&front, &rear, createOrderItemNode(itemName, itemPrice, itemQuantity, customerName));
                         push(&top,customerName,createOrderItemNode(itemName, itemPrice, itemQuantity, customerName));
+
                     }
 
                     break;
@@ -860,7 +863,6 @@ a:
                     break;
                 case 10:
                     saveMenuToFile(menu);
-                    freeMenuAndOrder(menu, order);
                     goto a;
                     break;
 
@@ -874,21 +876,28 @@ a:
         }
     }
     while (choice != 5);
+b:
     freeMenuAndOrder(menu, order);
+    menu = NULL;
+    order = NULL;
 
-    while (!isOrderQueueEmpty(&orderQueue))
+    while (front != NULL)
     {
-        struct OrderItem* processedItem = dequeueOrder(&orderQueue);
-
-        
-        free(processedItem->name);
-        free(processedItem->customerName);
-
-        free(processedItem);
+        struct OrderQueueNode* temp = front;
+        front = (front)->next;
+        free(temp->data);
+        free(temp);
     }
 
+    while (top != NULL)
+    {
+        struct StackNode* temp = top;
+        top = top->next;
+        free(temp->orderInfo);
+        free(temp);
+    }
 
-    printf("Thank you for using Cafeteria Management System!\n");
+    printf("\nThank you for using Cafeteria Management System!\n");
     return 0;
 }
 

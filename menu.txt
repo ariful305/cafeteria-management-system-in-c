@@ -1,4 +1,9 @@
-pizza 16.50 3
 pizza 16.00 30
 french 16.00 30
 sandwiches 10.00 30
+pasta 12.00 20
+salad 8.50 15
+burgers 14.00 25
+sushi 20.00 10
+tacos 11.50 15
+ice cream 5.00 50
